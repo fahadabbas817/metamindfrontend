@@ -2,7 +2,8 @@ import React, { useContext, useState } from "react";
 import { GeminiContext } from "./Context/GeminiContext";
 import { CiMenuFries } from "react-icons/ci";
 import { IoAddSharp } from "react-icons/io5";
-import {X} from "lucide-react"
+import { X, Home, Type, Image, Smile, Video } from "lucide-react";
+import { NavLink } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 
 const Sidebar = () => {
@@ -14,6 +15,14 @@ const Sidebar = () => {
   } = useContext(GeminiContext);
 
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const navItems = [
+    { name: "Home", path: "/", icon: Home },
+    { name: "Text", path: "/text", icon: Type },
+    { name: "Images", path: "/images", icon: Image },
+    { name: "Memes", path: "/memes", icon: Smile },
+    { name: "Videos", path: "/videos", icon: Video },
+  ];
 
   const renderSummaryContent = () => (
     <div className="mt-6 p-2">
@@ -61,49 +70,91 @@ const Sidebar = () => {
     <>
       {/* Desktop Sidebar */}
       <div
-        className={`hidden md:flex flex-col bg-gradient-to-b from-slate-700/90 to-slate-600/90 backdrop-blur-lg transition-all duration-300
-        ${extend ? "w-80" : "w-16"} h-screen fixed left-0 top-0 z-20 shadow-xl`}
+        className={`hidden md:flex flex-col bg-gradient-to-b from-slate-800/95 to-slate-700/95 backdrop-blur-xl border-r border-slate-600/50 transition-all duration-300 ease-in-out
+        ${extend ? "w-80" : "w-16 lg:w-20"} h-screen fixed left-0 top-0 z-30 shadow-2xl`}
       >
-        {/* Toggle */}
-        
-        <CiMenuFries
-          className="text-3xl mt-6 cursor-pointer mx-auto text-slate-200  transition"
-          onClick={() => setExtend(!extend)}
-        />
-       
+        {/* Header */}
+        <div className="p-4 border-b border-slate-600/30">
+          <div className="flex items-center justify-center">
+            <button
+              onClick={() => setExtend(!extend)}
+              className="p-2 rounded-lg hover:bg-slate-600/50 transition-colors"
+            >
+              <CiMenuFries className="text-2xl text-slate-200" />
+            </button>
+          </div>
+          {extend && (
+            <div className="mt-4 text-center">
+              <h2 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                MetaMindAI
+              </h2>
+            </div>
+          )}
+        </div>
 
         {/* New Summary */}
         <div
           onClick={newChatbtn}
-          className="flex cursor-pointer mt-6 items-center gap-2 bg-slate-400/60 hover:bg-slate-500/80 rounded-lg px-3 py-2 justify-center transition w-10/12 mx-auto"
+          className={`flex cursor-pointer mt-4 mx-4 items-center gap-3 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 rounded-xl px-3 py-3 transition-all duration-200 hover:scale-105 ${
+            !extend ? "justify-center" : ""
+          }`}
         >
-          <IoAddSharp className="text-2xl text-white" />
-          {extend && <p className="text-sm text-white">New Summary</p>}
+          <IoAddSharp className="text-xl text-cyan-400" />
+          {extend && <p className="text-sm font-medium text-white">New Summary</p>}
         </div>
 
+        {/* Navigation */}
+        <nav className="mt-6 px-2 space-y-2">
+          {navItems.map((item) => {
+            const IconComponent = item.icon;
+            return (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 hover:bg-slate-600/50 group ${
+                    isActive
+                      ? "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-400"
+                      : "text-slate-300 hover:text-white"
+                  } ${!extend ? "justify-center" : ""}`
+                }
+              >
+                <IconComponent className="text-xl flex-shrink-0" />
+                {extend && (
+                  <span className="text-sm font-medium">{item.name}</span>
+                )}
+              </NavLink>
+            );
+          })}
+        </nav>
         {/* Content */}
-        {extend && <div className="px-4">{renderSummaryContent()}</div>}
+        {extend && <div className="px-4 flex-1 overflow-hidden">{renderSummaryContent()}</div>}
       </div>
 
       {/* Mobile Menu Button */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-30 bg-slate-800/70 backdrop-blur-md p-2 rounded-md text-white"
+        className="md:hidden fixed top-4 left-4 z-40 bg-slate-800/90 backdrop-blur-md p-3 rounded-xl text-white shadow-lg hover:bg-slate-700/90 transition-colors"
       >
         <CiMenuFries size={24} />
       </button>
 
       {/* Mobile Sidebar Drawer */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-40 flex">
-          <div className="bg-gradient-to-b from-slate-900/95 to-slate-700/95 backdrop-blur-xl w-72 p-5 text-white shadow-xl">
+        <div className="fixed inset-0 z-50 flex md:hidden">
+          <div className="bg-gradient-to-b from-slate-900/98 to-slate-700/98 backdrop-blur-xl w-80 p-6 text-white shadow-2xl border-r border-slate-600/50">
             {/* Close Button */}
-            <button
-              onClick={() => setMobileOpen(false)}
-              className="mb-4 p-2 bg-white/10 rounded-md"
-            >
-              <X size={22} />
-            </button>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                MetaMindAI
+              </h2>
+              <button
+                onClick={() => setMobileOpen(false)}
+                className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
 
             {/* New Summary */}
             <div
@@ -111,11 +162,35 @@ const Sidebar = () => {
                 newChatbtn();
                 setMobileOpen(false);
               }}
-              className="flex cursor-pointer mb-6 items-center gap-2 bg-slate-600/60 hover:bg-slate-500/80 rounded-lg px-3 py-2 transition"
+              className="flex cursor-pointer mb-6 items-center gap-3 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 rounded-xl px-4 py-3 transition-all duration-200"
             >
-              <IoAddSharp className="text-2xl text-white" />
-              <p className="text-sm text-white">New Summary</p>
+              <IoAddSharp className="text-xl text-cyan-400" />
+              <p className="text-sm font-medium text-white">New Summary</p>
             </div>
+
+            {/* Mobile Navigation */}
+            <nav className="mb-6 space-y-2">
+              {navItems.map((item) => {
+                const IconComponent = item.icon;
+                return (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setMobileOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 hover:bg-slate-600/50 ${
+                        isActive
+                          ? "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-400"
+                          : "text-slate-300 hover:text-white"
+                      }`
+                    }
+                  >
+                    <IconComponent className="text-xl" />
+                    <span className="text-sm font-medium">{item.name}</span>
+                  </NavLink>
+                );
+              })}
+            </nav>
 
             {/* Content */}
             {renderSummaryContent()}
